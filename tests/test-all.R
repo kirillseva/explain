@@ -1,3 +1,3 @@
 library("testthat")
-library("mailgunner")
-test_check("mailgunner")
+library("explain")
+test_check("explain")

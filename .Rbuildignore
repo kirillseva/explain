@@ -1,0 +1,9 @@
+^.*\.Rproj$
+^\.Rproj\.user$
+^\.travis\.yml$
+^codecov\.yml$
+^appveyor\.yml$
+.Rprofile
+^\.httr-oauth$
+^README\.Rmd$
+^README-.*\.png$
