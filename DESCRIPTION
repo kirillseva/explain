@@ -21,6 +21,8 @@ Imports:
 Suggests:
     testthat,
     tundra
-Remotes: robertzk/tundra
+Remotes:
+    robertzk/tundra,
+    robertzk/stageRunner
 Roxygen: list(wrap = FALSE)
 RoxygenNote: 5.0.1.9000
