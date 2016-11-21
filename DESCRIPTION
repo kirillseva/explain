@@ -19,6 +19,8 @@ Imports:
     stats,
     ggplot2
 Suggests:
-    testthat
+    testthat,
+    tundra
+Remotes: robertzk/tundra
 Roxygen: list(wrap = FALSE)
 RoxygenNote: 5.0.1.9000
