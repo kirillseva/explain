@@ -5,7 +5,7 @@ URL: http://github.com/kirillseva/explain
 BugReports: http://github.com/kirillseva/explain/issues
 Description: Tools for explaining a classifier's prediction around a single data
     point. Based on https://arxiv.org/abs/1602.04938 paper.
-Version: 0.0.0.9000
+Version: 0.0.0.9001
 Author: Kirill Sevastyanenko <kirillseva@gmail.com>
 Maintainer: Kirill Sevastyanenko <kirillseva@gmail.com>
 Authors@R: c(person("Kirill", "Sevastyanenko",
