@@ -8,22 +8,33 @@
 #'   deviations for the variables that need to be perturbed.
 #' @return an explanation object.
 #' @export
-explain <- function(classifier, onerow, variable_summaries, num_features = 3,
+explain <- function(classifier, onerow, variable_summaries, num_features = 3, verbose = TRUE,
                     num_samples = 100, explainer = MASS::lm.ridge, feature_selection = 'auto', ...) {
   `validate_variable_summaries!`(variable_summaries)
+  variable_summaries %<>% .[intersect(names(.), names(onerow))]
   kernel_width <- 0.75 * sqrt(length(variable_summaries))
 
-  traindf <- lapply(names(variable_summaries), function(name) {
+  if (isTRUE(verbose)) {
+    message('Sampling around your data point...')
+    lmethod <- pbapply::pblapply
+  } else { lmethod <- lapply }
+  traindf <- lmethod(names(variable_summaries), function(name) {
     distribution <- variable_summaries[[name]]
     lapply(seq_len(num_samples), function(i) {
-      replacement <- rnorm(1, distribution$mean, distribution$sd)
+      replacement <- rnorm(1, onerow[[name]], distribution$sd)
       within(onerow, eval(bquote({ .(name) = replacement })))
     }) %>% dplyr::bind_rows(.)
-  }) %>% dplyr::bind_rows(.) %>% rbind(onerow, .)
+  }) %>% dplyr::bind_rows(.) %>% dplyr::bind_rows(onerow, .)
   # Allow tundracontainers to predict on train data
-  traindf[['explain_scores_']] <- classifier$predict(traindf, list(on_train = TRUE))
+  traindf[['explain_scores_']] <- classifier$predict(traindf, list(on_train = TRUE)) * 100
   # get weights and important features
   traindf <- traindf[c('explain_scores_', names(variable_summaries))]
+  # normalize
+  lapply(names(variable_summaries), function(name) {
+    distribution <- variable_summaries[[name]]
+    traindf[[name]] <<- (as.numeric(traindf[[name]]) - distribution$mean) / distribution$sd
+  })
+  print(head(traindf))
   weights <- stats::dist(traindf) %>% as.matrix %>% { .[1,] } %>% kernel(., kernel_width)
   features <- select_features(traindf, weights, num_features, feature_selection)
   traindf <- traindf[c('explain_scores_', features)]

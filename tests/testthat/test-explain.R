@@ -23,7 +23,7 @@ describe("end to end", {
     classifier <- list(
       predict = function(x, ...) { predict(simple_model, x) }
     )
-    explanation <- explain(classifier, dataset[42, ], variable_summaries, num_features = 3,
+    explanation <- explain(classifier, dataset[42, ], variable_summaries, num_features = 3, verbose = FALSE,
                         num_samples = 10, explainer = MASS::lm.ridge, feature_selection = 'auto')
     expect_is(explanation, "explanation")
     expect_true(setequal(explanation$features, head(variables, 3)))
