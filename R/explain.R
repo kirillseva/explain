@@ -11,14 +11,16 @@
 explain <- function(classifier, onerow, variable_summaries, num_features = 3, verbose = TRUE,
                     num_samples = 100, explainer = MASS::lm.ridge, feature_selection = 'auto', ...) {
   `validate_variable_summaries!`(variable_summaries)
-  variable_summaries %<>% .[intersect(names(.), names(onerow))]
+  variables <- intersect(names(variable_summaries), names(onerow))
+  variables <- variables[!is.na(onerow[variables])]
+  variable_summaries %<>% .[variables]
   kernel_width <- 0.75 * sqrt(length(variable_summaries))
 
   if (isTRUE(verbose)) {
     message('Sampling around your data point...')
     lmethod <- pbapply::pblapply
   } else { lmethod <- lapply }
-  traindf <- lmethod(names(variable_summaries), function(name) {
+  traindf <- lmethod(variables, function(name) {
     distribution <- variable_summaries[[name]]
     lapply(seq_len(num_samples), function(i) {
       replacement <- rnorm(1, onerow[[name]], distribution$sd)
